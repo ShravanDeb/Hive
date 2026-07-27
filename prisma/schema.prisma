@@ -1,0 +1,183 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             Int             @id @default(autoincrement())
+  name           String
+  email          String          @unique
+  password       String?
+  department     String?
+  year           Int?
+  role           String          @default("USER") // "USER" | "ADMIN"
+  verified       Boolean         @default(false)
+  otpCode        String?
+  otpExpires     DateTime?
+  bio            String?
+  profileImage   String?
+  githubUrl      String?
+  linkedinUrl    String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  projects       Project[]       @relation("UserProjects")
+  applications   Application[]
+  notifications  Notification[]
+  bookmarks      Bookmark[]
+  skills         Skill[]         @relation("UserSkills")
+  sentInvitations     Invitation[] @relation("SentInvitations")
+  receivedInvitations Invitation[] @relation("ReceivedInvitations")
+  abuseLog       AbusiveMessageLog[]
+}
+
+model Project {
+  id             Int             @id @default(autoincrement())
+  title          String
+  description    String
+  status         String          @default("OPEN") // "OPEN" | "FULL" | "CLOSED"
+  category       String?         // e.g. "Web", "Mobile", "AI/ML", "IoT", "Research", "Design"
+  projectType    String?         // "Hackathon", "Research", "Side Project", "Open Source", "Academic"
+  experienceLevel String?        // "Beginner", "Intermediate", "Advanced", "Any"
+  teamSize       Int?            // max team members
+  duration       String?         // e.g. "1 week", "1 month", "Ongoing"
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  owner          User            @relation("UserProjects", fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId        Int
+  skills         Skill[]         @relation("ProjectSkills")
+  applications   Application[]
+  bookmarks      Bookmark[]
+  invitations    Invitation[]
+}
+
+model Skill {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  projects Project[] @relation("ProjectSkills")
+  users    User[]    @relation("UserSkills")
+}
+
+model Application {
+  id        Int      @id @default(autoincrement())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  message   String?
+  status    String   @default("PENDING") // "PENDING" | "ACCEPTED" | "REJECTED"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([projectId, userId])
+}
+
+model Invitation {
+  id          Int      @id @default(autoincrement())
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   Int
+  sender      User     @relation("SentInvitations", fields: [senderId], references: [id], onDelete: Cascade)
+  senderId    Int
+  receiver    User     @relation("ReceivedInvitations", fields: [receiverId], references: [id], onDelete: Cascade)
+  receiverId  Int
+  message     String?
+  role        String?
+  status      String   @default("PENDING") // "PENDING" | "ACCEPTED" | "DECLINED"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([projectId, receiverId])
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  type      String   // "APPLICATION_RECEIVED" | "APPLICATION_ACCEPTED" | "APPLICATION_REJECTED" | "INVITATION_RECEIVED" | "INVITATION_ACCEPTED" | "INVITATION_DECLINED" | "SYSTEM"
+  message   String
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Bookmark {
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId Int
+  createdAt DateTime @default(now())
+
+  @@id([userId, projectId])
+}
+
+model Event {
+  id              Int      @id @default(autoincrement())
+  title           String
+  organizer       String?
+  organizerType   String?
+  location        String?
+  city            String?
+  state           String?
+  country         String?
+  mode            String?
+  registrationFee String?
+  startDate       String?
+  endDate         String?
+  date            String?
+  teamSize        String   @default("1 - 4 Members")
+  prize           String?
+  link            String?
+  source          String?
+  description     String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Hackathon {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  date        String
+  location    String
+  teamSize    String   @default("1 - 4 Members")
+  prize       String?
+  link        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AllowedEmail {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  note      String?
+  addedBy   String?
+  createdAt DateTime @default(now())
+}
+
+model IdVerificationRequest {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String   @unique
+  collegeName String
+  department  String?
+  idCardImage String
+  status      String   @default("PENDING") // "PENDING" | "APPROVED" | "REJECTED"
+  adminNote   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AbusiveMessageLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  timestamp DateTime @default(now())
+  reason    String?
+  count     Int      @default(1)
+
+  @@index([userId])
+  @@index([timestamp])
+}

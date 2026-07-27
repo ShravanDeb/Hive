@@ -1,0 +1,123 @@
+import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { getErrorMessage } from "@/lib/error";
+import { checkAbuseServer } from "@/lib/moderation";
+
+export async function PATCH(req: Request) {
+  try {
+    const session = await auth();
+    const currentUser = session?.user;
+
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: "You must be logged in to update your profile." },
+        { status: 401 }
+      );
+    }
+
+    const { name, bio, githubUrl, linkedinUrl, department, year, skills } =
+      await req.json();
+
+    const currentUserId = Number((currentUser as any).id);
+    if (isNaN(currentUserId)) {
+      return NextResponse.json(
+        { error: "Invalid user ID." },
+        { status: 400 }
+      );
+    }
+
+    // ── Server-side moderation check ──
+    const textToCheck = [name, bio, Array.isArray(skills) ? skills.join(" ") : ""].filter(Boolean).join(" ");
+    if (textToCheck) {
+      const abuseResult = await checkAbuseServer(textToCheck, currentUserId);
+      if (abuseResult.abusive) {
+        return NextResponse.json(
+          {
+            error: "Your profile details contain inappropriate language.",
+            flaggedWords: abuseResult.flaggedWords,
+          },
+          { status: 400 }
+        );
+      }
+    }
+
+    const updateData: any = {};
+    if (name) updateData.name = name;
+    if (bio !== undefined) updateData.bio = bio;
+    if (githubUrl !== undefined) updateData.githubUrl = githubUrl;
+    if (linkedinUrl !== undefined) updateData.linkedinUrl = linkedinUrl;
+    if (department) updateData.department = department;
+    if (year) updateData.year = Number(year);
+
+    if (skills && Array.isArray(skills)) {
+      updateData.skills = {
+        set: [],
+        connectOrCreate: skills.map((skillName: string) => ({
+          where: { name: skillName },
+          create: { name: skillName },
+        })),
+      };
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: currentUserId },
+      data: updateData,
+    });
+
+    return NextResponse.json({
+      message: "Profile updated successfully.",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Update profile error:", error);
+    return NextResponse.json(
+      { error: getErrorMessage(error) },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE() {
+  try {
+    const session = await auth();
+    const currentUser = session?.user;
+
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: "You must be logged in to delete your account." },
+        { status: 401 }
+      );
+    }
+
+    const currentUserId = Number((currentUser as any).id);
+    if (isNaN(currentUserId)) {
+      return NextResponse.json(
+        { error: "Invalid user ID." },
+        { status: 400 }
+      );
+    }
+
+    await prisma.$transaction([
+      prisma.application.deleteMany({ where: { userId: currentUserId } }),
+      prisma.bookmark.deleteMany({ where: { userId: currentUserId } }),
+      prisma.notification.deleteMany({ where: { userId: currentUserId } }),
+      prisma.application.deleteMany({
+        where: { project: { ownerId: currentUserId } },
+      }),
+      prisma.bookmark.deleteMany({
+        where: { project: { ownerId: currentUserId } },
+      }),
+      prisma.project.deleteMany({ where: { ownerId: currentUserId } }),
+      prisma.user.delete({ where: { id: currentUserId } }),
+    ]);
+
+    return NextResponse.json({ message: "Account deleted successfully." });
+  } catch (error) {
+    console.error("Delete account error:", error);
+    return NextResponse.json(
+      { error: getErrorMessage(error) },
+      { status: 500 }
+    );
+  }
+}

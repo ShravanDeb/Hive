@@ -1,0 +1,171 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { Clock, ArrowRight, Bookmark } from "lucide-react";
+
+interface ProjectCardProps {
+  project: {
+    id: number;
+    title: string;
+    description: string;
+    status: string;
+    createdAt: Date;
+    owner: {
+      id: number;
+      name: string;
+      department: string;
+      year: number;
+    };
+    skills: {
+      id: number;
+      name: string;
+    }[];
+  };
+  initialBookmarked?: boolean;
+}
+
+function statusBadge(status: string) {
+  switch (status) {
+    case "OPEN":
+      return <span className="badge badge-green">Open</span>;
+    case "FULL":
+      return <span className="badge badge-yellow">Full</span>;
+    case "CLOSED":
+      return <span className="badge badge-red">Closed</span>;
+    default:
+      return <span className="badge badge-gray">{status}</span>;
+  }
+}
+
+export default function ProjectCard({ project, initialBookmarked = false }: ProjectCardProps) {
+  const [bookmarked, setBookmarked] = useState(initialBookmarked);
+  const [bookmarkLoading, setBookmarkLoading] = useState(false);
+
+  const truncatedDesc =
+    project.description.length > 120
+      ? `${project.description.substring(0, 120)}…`
+      : project.description;
+
+  const dateStr = new Date(project.createdAt).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+  });
+
+  const ownerInitial = ((project?.owner?.name || "U").trim()[0] || "U").toUpperCase();
+
+  const toggleBookmark = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (bookmarkLoading) return;
+    setBookmarkLoading(true);
+    const method = bookmarked ? "DELETE" : "POST";
+    try {
+      const res = await fetch(`/api/projects/${project.id}/bookmark`, { method });
+      if (res.ok) {
+        setBookmarked(!bookmarked);
+      }
+    } catch {
+      /* silent */
+    } finally {
+      setBookmarkLoading(false);
+    }
+  };
+
+  return (
+    <article className="relative flex flex-col h-full p-5 group min-w-0 transition-all duration-300 rounded-xl" style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.04)", boxShadow: "0 4px 24px rgba(0,0,0,0.3)" }}>
+      {/* Top row: status + bookmark + date */}
+      <div className="flex items-center justify-between gap-2 mb-3 shrink-0">
+        {statusBadge(project.status)}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={toggleBookmark}
+            disabled={bookmarkLoading}
+            aria-label={bookmarked ? "Remove bookmark" : "Bookmark project"}
+            title={bookmarked ? "Remove bookmark" : "Save project"}
+            className={`min-h-[36px] min-w-[36px] p-2 rounded-lg transition-colors cursor-pointer disabled:opacity-50 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform duration-150 ${
+              bookmarked
+                ? "text-foreground bg-secondary/60"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary/40"
+            }`}
+          >
+            <Bookmark
+              size={14}
+              strokeWidth={1.75}
+              className={bookmarked ? "fill-foreground" : ""}
+            />
+          </button>
+          <span className="flex items-center gap-1 text-[11px] text-muted-foreground shrink-0">
+            <Clock size={11} strokeWidth={1.75} />
+            {dateStr}
+          </span>
+        </div>
+      </div>
+
+      {/* Title */}
+      <h3 style={{ fontFamily: "var(--font-display), system-ui, sans-serif", fontWeight: 700, fontSize: "0.875rem", letterSpacing: "-0.03em", color: "var(--foreground)" }} className="leading-snug mb-2 line-clamp-1 break-words min-w-0">
+        <Link href={`/projects/${project.id}`} className="hover:underline underline-offset-2">
+          {project.title}
+        </Link>
+      </h3>
+
+      {/* Description */}
+      <p style={{ fontFamily: "var(--font-body), system-ui, sans-serif", fontSize: "0.75rem", color: "var(--muted-foreground)" }} className="leading-relaxed line-clamp-3 mb-4 flex-1 break-words min-w-0 overflow-hidden">
+        {truncatedDesc}
+      </p>
+
+      {/* Skills */}
+      {project.skills.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mb-4 shrink-0">
+          {project.skills.slice(0, 4).map((skill) => (
+            <span
+              key={skill.id}
+              style={{ fontFamily: "var(--font-mono), monospace", fontSize: "0.625rem", fontWeight: 500 }}
+              className="px-2 py-0.5 rounded-md bg-secondary text-muted-foreground max-w-[120px] truncate"
+            >
+              {skill.name}
+            </span>
+          ))}
+          {project.skills.length > 4 && (
+            <span style={{ fontFamily: "var(--font-mono), monospace", fontSize: "0.625rem", fontWeight: 500 }} className="px-2 py-0.5 rounded-md bg-secondary text-muted-foreground">
+              +{project.skills.length - 4}
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Footer */}
+      <div className="flex items-center justify-between pt-3.5 border-t border-border shrink-0 gap-2">
+        {/* Owner */}
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <div className="h-6 w-6 rounded-full bg-secondary border border-border flex items-center justify-center text-[10px] font-semibold text-foreground shrink-0 overflow-hidden">
+            {ownerInitial}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p style={{ fontFamily: "var(--font-body), system-ui, sans-serif", fontSize: "0.75rem", fontWeight: 500, color: "var(--foreground)" }} className="leading-none truncate">
+              <Link href={`/profile/${project.owner.id}`} className="hover:underline underline-offset-2">
+                {project.owner.name}
+              </Link>
+            </p>
+            <p style={{ fontFamily: "var(--font-body), system-ui, sans-serif", fontSize: "0.625rem", color: "var(--muted-foreground)" }} className="mt-0.5 truncate">
+              {project.owner.department}
+            </p>
+          </div>
+        </div>
+
+        {/* View link */}
+        <Link
+          href={`/projects/${project.id}`}
+          className="btn-ghost group/btn flex items-center gap-1 text-[12px] px-2.5 py-1.5 md:opacity-0 md:group-hover:opacity-100 focus-visible:opacity-100 transition-all duration-150 shrink-0"
+          tabIndex={0}
+          aria-label={`View ${project.title}`}
+        >
+          <span>View</span>
+          <ArrowRight size={12} strokeWidth={2} className="transition-transform duration-150 group-hover/btn:translate-x-0.5" />
+        </Link>
+      </div>
+      {/* Hover glow */}
+      <div className="absolute inset-0 rounded-xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.08)" }} />
+    </article>
+  );
+}
