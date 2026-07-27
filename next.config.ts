@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: {
-      allowedOrigins: ['localhost:3000', 'localhost:*', '127.0.0.1:*'],
+      allowedOrigins: ['localhost:3000', 'localhost:*', '127.0.0.1:*', 'hive-eight-livid.vercel.app'],
     },
   },
   images: {
