@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npx prisma generate --no-engine 2>&1 | Out-Null; next build",
+    "postinstall": "prisma generate",
+    "build": "prisma generate && next build",
     "build:full": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
