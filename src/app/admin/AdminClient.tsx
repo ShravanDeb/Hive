@@ -431,11 +431,7 @@ export default function AdminClient({
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           {/* Hive logo */}
           <Link href="/dashboard" className="flex items-center gap-2 mr-2 sm:mr-4 shrink-0">
-            <div className="h-7 w-7 rounded-[7px] bg-foreground flex items-center justify-center shrink-0">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                <path d="M2 2h4v4H2zM8 2h4v4H8zM2 8h4v4H2zM8 8h4v4H8z" fill="white" />
-              </svg>
-            </div>
+            <img src="/icon.png" alt="Hive" width={28} height={28} className="rounded-[4px] shrink-0" draggable={false} />
             <span className="text-[15px] font-bold tracking-tight text-foreground">Hive</span>
           </Link>
 
