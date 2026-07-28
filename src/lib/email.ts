@@ -165,6 +165,46 @@ export async function sendIdVerificationResultEmail(params: {
   await sendEmail({ to: params.email, subject, html });
 }
 
+export async function sendAdminVerificationAlert(params: {
+  name: string;
+  email: string;
+  collegeName: string;
+  department?: string | null;
+}) {
+  const adminEmail = process.env.GMAIL_USER || "official.hive.collab@gmail.com";
+  const subject = `New Student ID Verification Request — ${params.name}`;
+
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 580px; margin: 0 auto; padding: 24px; border: 1px solid #e4e4e7; border-radius: 10px; background-color: #ffffff;">
+      <div style="background: linear-gradient(135deg, #0A0A0A 0%, #333 100%); padding: 20px; border-radius: 8px; text-align: center; color: white; margin-bottom: 24px;">
+        <h2 style="margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px;">Hive</h2>
+        <p style="margin: 4px 0 0 0; font-size: 13px; opacity: 0.9;">New Verification Request</p>
+      </div>
+      <div style="padding: 0 8px;">
+        <h3 style="margin-top: 0; color: #09090b;">A student has submitted their ID for verification</h3>
+        <table style="width: 100%; font-size: 14px; color: #3f3f46; line-height: 1.8; border-collapse: collapse;">
+          <tr><td style="font-weight: 600; padding: 4px 8px 4px 0;">Name</td><td>${params.name}</td></tr>
+          <tr><td style="font-weight: 600; padding: 4px 8px 4px 0;">Email</td><td>${params.email}</td></tr>
+          <tr><td style="font-weight: 600; padding: 4px 8px 4px 0;">College</td><td>${params.collegeName}</td></tr>
+          ${params.department ? `<tr><td style="font-weight: 600; padding: 4px 8px 4px 0;">Department</td><td>${params.department}</td></tr>` : ""}
+        </table>
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${process.env.NEXTAUTH_URL || "https://hive-eight-livid.vercel.app"}/admin" style="display: inline-block; background-color: #0A0A0A; color: white; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px;">
+            Review in Admin Panel
+          </a>
+        </div>
+      </div>
+      <div style="border-top: 1px solid #f4f4f5; margin-top: 30px; padding-top: 20px; text-align: center;">
+        <p style="font-size: 11px; color: #a1a1aa; margin: 0;">
+          This is an automated message from Hive. Please do not reply directly to this email.
+        </p>
+      </div>
+    </div>
+  `;
+
+  await sendEmail({ to: adminEmail, subject, html });
+}
+
 export async function sendApplicationStatusEmail(params: {
   email: string;
   name: string;

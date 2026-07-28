@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendAdminVerificationAlert } from "@/lib/email";
 
 export async function POST(req: Request) {
   try {
@@ -73,6 +74,13 @@ export async function POST(req: Request) {
         },
       });
 
+      sendAdminVerificationAlert({
+        name: name.trim(),
+        email: cleanEmail,
+        collegeName: collegeName.trim(),
+        department: department ? department.trim() : null,
+      }).catch(() => {});
+
       return NextResponse.json({
         message: "Your Student ID verification request has been updated and resubmitted for admin review!",
         request: updatedRequest,
@@ -89,6 +97,13 @@ export async function POST(req: Request) {
         status: "PENDING",
       },
     });
+
+    sendAdminVerificationAlert({
+      name: name.trim(),
+      email: cleanEmail,
+      collegeName: collegeName.trim(),
+      department: department ? department.trim() : null,
+    }).catch(() => {});
 
     return NextResponse.json({
       message: "Student ID verification request submitted successfully! Our admins will review your request within 24 hours.",
