@@ -28,6 +28,22 @@ async function main() {
   }
 
   console.log(`Seeded ${skillNames.length} skills.`);
+
+  // Ensure official admin account exists
+  const adminEmail = "official.hive.collab@gmail.com";
+  const adminUser = await prisma.user.upsert({
+    where: { email: adminEmail },
+    update: { role: "ADMIN", verified: true },
+    create: {
+      name: "Hive Admin",
+      email: adminEmail,
+      role: "ADMIN",
+      verified: true,
+      department: "Administration",
+      year: 4,
+    },
+  });
+  console.log(`Admin user: ${adminUser.email} (role: ${adminUser.role})`);
 }
 
 main()
