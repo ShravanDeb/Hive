@@ -1,0 +1,120 @@
+HIVE PROPRIETARY SOFTWARE LICENSE
+Version 1.0 — Effective: January 1, 2026
+
+Copyright © 2026 Shravan Deb.
+All Rights Reserved.
+
+---
+
+## 1. Definitions
+
+**"Software"** refers to the Hive application, including all source code, compiled code, algorithms, data structures, APIs, database schemas, configurations, scripts, stylesheets, visual designs, user interfaces, icons, logos, branding elements, documentation, and any related materials or derivative works.
+
+**"License"** refers to this Hive Proprietary Software License.
+
+**"You"** (or **"Your"**) refers to any individual or entity accessing or using the Software.
+
+**"Owner"** refers to Shravan Deb, the sole and exclusive owner of all intellectual property rights in the Software.
+
+---
+
+## 2. Proprietary Rights
+
+The Software is proprietary and confidential intellectual property of the Owner. All title, ownership rights, and intellectual property rights in and to the Software are owned exclusively by the Owner. The Software is protected by copyright, trademark, and other intellectual property laws and international treaties.
+
+---
+
+## 3. License Grant
+
+Subject to the terms of this License, the Owner grants You a limited, non-exclusive, non-transferable, non-sublicensable, revocable license to:
+
+- View the source code solely as permitted through GitHub's Terms of Service for the purpose of reviewing the repository;
+- Submit pull requests as contributions to the repository, provided such contributions comply with the Contributing Guidelines.
+
+---
+
+## 4. Restrictions
+
+You shall NOT, without prior written permission from the Owner:
+
+**4.1** Copy, reproduce, modify, adapt, translate, or create derivative works of the Software or any portion thereof.
+
+**4.2** Distribute, sublicense, lease, rent, sell, resell, or transfer the Software or any portion thereof to any third party.
+
+**4.3** Host, mirror, deploy, or operate the Software for any commercial or public purpose.
+
+**4.4** Reverse engineer, disassemble, decompile, or otherwise attempt to derive the source code, algorithms, or underlying ideas of the Software, except to the extent expressly permitted by applicable law.
+
+**4.5** Remove, alter, or obscure any proprietary notices, labels, or marks on the Software.
+
+**4.6** Use the Software to develop, build, or operate any competing product or service.
+
+**4.7** Publicly display, publish, or distribute the Software or any derivative works thereof.
+
+---
+
+## 5. Forking and Contributions
+
+**5.1** Forking the repository on GitHub is permitted solely for the purpose of submitting pull requests back to the official repository.
+
+**5.2** Forks maintained independently of the official repository for purposes other than active contribution may be requested to be removed at the Owner's discretion.
+
+**5.3** All contributions submitted via pull request become part of the Software and are subject to this License. By submitting a contribution, You agree that:
+
+  - (a) The Owner acquires no obligation to merge, review, or respond to any contribution;
+  - (b) Contributing does not grant You any ownership, license, or intellectual property rights in the Software;
+  - (c) The Owner may modify, discard, or reject any contribution without notice or explanation.
+
+---
+
+## 6. Intellectual Property
+
+**6.1** The Hive name, logo, wordmark, icon, branding, visual identity, design system, documentation, and all related materials are protected trademarks and copyrighted works of the Owner.
+
+**6.2** Any unauthorized use of the Hive name, branding, visual identity, or design language in any competing or derivative product or service is strictly prohibited.
+
+---
+
+## 7. No Warranty
+
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT. THE OWNER MAKES NO WARRANTY THAT THE SOFTWARE WILL BE UNINTERRUPTED, ERROR-FREE, SECURE, OR FREE OF VIRUSES OR OTHER HARMFUL COMPONENTS.
+
+---
+
+## 8. Limitation of Liability
+
+IN NO EVENT SHALL THE OWNER BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING OUT OF OR RELATED TO YOUR USE OF OR INABILITY TO USE THE SOFTWARE, EVEN IF THE OWNER HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. THE OWNER'S TOTAL CUMULATIVE LIABILITY SHALL NOT EXCEED ONE HUNDRED U.S. DOLLARS ($100.00).
+
+---
+
+## 9. Termination
+
+This License is effective until terminated. The Owner may terminate this License at any time if You fail to comply with any term of this License. Upon termination, You must cease all use of the Software and destroy all copies in Your possession.
+
+---
+
+## 10. Governing Law
+
+This License shall be governed by and construed in accordance with the laws of India, without regard to its conflict of law provisions. Any disputes arising under this License shall be resolved in the courts of competent jurisdiction in India.
+
+---
+
+## 11. Entire Agreement
+
+This License constitutes the entire agreement between You and the Owner regarding the Software and supersedes all prior agreements, understandings, representations, and warranties, whether written or oral.
+
+---
+
+## 12. Severability
+
+If any provision of this License is found to be unenforceable or invalid, that provision shall be limited or eliminated to the minimum extent necessary, and the remaining provisions shall remain in full force and effect.
+
+---
+
+## 13. Contact
+
+For licensing inquiries, commercial use requests, or questions about this License, contact:
+
+**Shravan Deb**
+Email: official.hive.collab@gmail.com
+GitHub: [https://github.com/ShravanDeb](https://github.com/ShravanDeb)
